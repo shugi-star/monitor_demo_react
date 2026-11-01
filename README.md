@@ -1,130 +1,162 @@
-# Patient Monitoring System
+# Patient Monitoring System — Monitoring Server
 
 ## Overview
 
-A full-stack patient monitoring system designed to help hospital nurses view patients' monitor data in real time through a centralized interface.
+The Monitoring Server is a dedicated component of a full-stack patient monitoring system designed to support real-time monitoring updates.
 
-The goal of the system is to make patient monitoring information accessible to nurses through a user-friendly interface, helping them view patient-related information and receive real-time monitoring updates.
+Built with Node.js and Express, the service uses WebSockets to maintain communication with connected clients, allowing monitoring information to be delivered without relying exclusively on repeated HTTP requests.
 
-The system consists of three interconnected components:
+This repository focuses on real-time communication and integration with the Main Backend and React frontend.
 
-- **Frontend:** A React application that provides the user interface for viewing patient information and monitoring data.
-- **Main Backend:** A Node.js and Express server that provides API endpoints for patient, nurse, and bed-related data.
-- **Monitoring Server:** A separate Node.js service that uses WebSockets to support real-time monitoring updates.
-
-Together, these components demonstrate a multi-service architecture that combines frontend development, REST API integration, and real-time communication.
+It is part of a larger project composed of three interconnected repositories.
 
 ## System Architecture
 
+The complete system consists of three independent but interconnected components:
+
+- **Frontend:** A React application providing the user interface.
+- **Main Backend:** A Node.js and Express server providing REST API endpoints and patient-related data.
+- **Monitoring Server:** A separate Node.js service managing WebSocket connections and monitoring updates.
+
+### Architecture Diagram
+
 ```text
-               Hospital Nurses
-                      |
-                      v
-                React Frontend
-                 /          \
-                v            v
-           REST API       WebSocket
-                |            |
-                v            v
-          Main Backend   Monitoring Server
-          Node.js/Express  Node.js/Express
-                |
-                v
-        Patient-related data
+                  Hospital Nurses
+                         |
+                         v
+                   React Frontend
+                    /          \
+                   v            v
+              REST API       WebSocket
+                   |            |
+                   v            v
+             Main Backend <--- Monitoring Server
+             Node.js/Express    Node.js/Express
+                   |
+                   v
+           Patient-related data
 ```
+
+## Related Repositories
+
+This project is divided into three repositories:
+
+| Component | Repository | Technology |
+|---|---|---|
+| Frontend | [client_react_finalProject](https://github.com/shugi-star/client_react_finalProject) | React |
+| Main Backend | [server_react_finalProject](https://github.com/shugi-star/server_react_finalProject) | Node.js, Express |
+| Monitoring Server | [monitor_demo_react](https://github.com/shugi-star/monitor_demo_react) | Node.js, Express, WebSockets |
 
 ## Technologies
 
 - Node.js
 - Express.js
 - JavaScript
-- WebSockets
+- WebSockets (`ws`)
 - HTTP APIs
 - npm
 
-## Monitoring Server — This Repository
+## Responsibilities
 
-This repository contains the monitoring service, built with Node.js and Express, that supports real-time communication through WebSockets.
-
-The service is intended to enable connected clients, such as the frontend used by nurses, to receive monitoring updates without repeatedly requesting the data through standard HTTP requests.
-
-### Responsibilities
-
-- Providing a monitoring-related HTTP endpoint.
-- Establishing WebSocket connections.
+- Providing monitoring-related HTTP endpoints.
+- Establishing and managing WebSocket connections.
 - Managing client subscriptions to patient monitoring updates.
-- Sending monitoring data to connected clients.
-- Communicating with the main backend to retrieve patient-related information.
+- Sending monitoring information to connected clients.
+- Communicating with the Main Backend to retrieve patient-related information.
 
-### WebSocket Endpoint
+The service also generates simulated vital-sign data for demonstration purposes.
 
-The WebSocket path configured in the server is:
+## WebSocket Configuration
+
+The configured WebSocket endpoint is:
 
 ```text
 /ws/monitorsRealtime
 ```
 
-The server uses port `3002` by default.
-
-## Running Locally
-
-### Prerequisites
-
-- Node.js and npm installed.
-- The main backend available locally.
-
-### 1. Install Dependencies
-
-Open a terminal in the `monitor_demo_react` directory and run:
-
-```bash
-npm install
-```
-
-### 2. Start the Monitoring Server
-
-Run:
-
-```bash
-node server.js
-```
-
 The monitoring server uses port `3002` by default.
 
-### 3. Connect to the Main Backend
-
-In the current local development configuration, the monitoring server expects the main backend at:
-
-```text
-http://localhost:3001
-```
-
-Start the main backend first and verify that it is available before testing monitoring functionality.
-
-### 4. Connect the Frontend
-
-Start the React frontend and ensure its monitoring connection points to the local WebSocket endpoint:
+The local WebSocket address is:
 
 ```text
 ws://localhost:3002/ws/monitorsRealtime
 ```
 
-The frontend and backend connection settings must match the actual configuration in the code.
+## Running the Complete System Locally
 
-## Integration with the Other Components
+The Monitoring Server is one of three services in the Patient Monitoring System. For complete local operation, the other two repositories must also be running.
 
-The monitoring server works alongside the main backend and the React frontend to support real-time patient monitoring updates.
+### Prerequisites
 
-To test the complete system locally, all three components must be running and correctly configured.
+- Node.js and npm installed.
+- The Main Backend available locally.
+- The frontend repository available locally.
 
-## Future Improvements
+### 1. Clone the Repositories
 
-- Add automated tests for WebSocket connections and subscriptions.
-- Improve handling of disconnected clients.
-- Document the WebSocket message format.
-- Move service URLs into environment variables.
-- Add deployment instructions and a demonstration environment.
+```bash
+git clone https://github.com/shugi-star/server_react_finalProject.git
+git clone https://github.com/shugi-star/monitor_demo_react.git
+git clone https://github.com/shugi-star/client_react_finalProject.git
+```
+
+### 2. Start the Main Backend
+
+In the `server_react_finalProject` directory:
+
+```bash
+npm install
+npm start
+```
+
+The Main Backend uses port `3001` by default:
+
+```text
+http://localhost:3001
+```
+
+### 3. Start the Monitoring Server
+
+Open a separate terminal in the `monitor_demo_react` directory:
+
+```bash
+npm install
+node server.js
+```
+
+The monitoring service uses port `3002` by default.
+
+### 4. Start the Frontend
+
+Open another terminal in the `client_react_finalProject` directory:
+
+```bash
+npm install
+npm start
+```
+
+The frontend is typically available at:
+
+```text
+http://localhost:3000
+```
+
+### Local Services Overview
+
+| Service | Default Port | Local Address |
+|---|---:|---|
+| Frontend | 3000 | `http://localhost:3000` |
+| Main Backend | 3001 | `http://localhost:3001` |
+| Monitoring Server | 3002 | `ws://localhost:3002/ws/monitorsRealtime` |
+
+### Integration Configuration
+
+The Monitoring Server retrieves patient-related information from the Main Backend and provides monitoring updates to connected clients.
+
+Before testing the complete application, verify that the patient API path configured in this service matches the actual route exposed by the Main Backend.
+
+The frontend must also use the matching WebSocket endpoint.
 
 ## Project Context
 
-This repository demonstrates real-time communication and service integration in a patient monitoring application concept designed for hospital nursing workflows.
+The Monitoring Server is part of the **Patient Monitoring System**, demonstrating WebSocket communication, client subscription management, simulated monitoring data, and integration between independent backend and frontend services.
